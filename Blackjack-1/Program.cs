@@ -1,45 +1,49 @@
 ﻿using System;
 using System.Text;
-
 Console.OutputEncoding = Encoding.UTF8;
 
-bool restartFlag = false;
+// 카드 뽑는 클래스 초기화
+DrawCard drawcard = new DrawCard();
 
+bool restartFlag = false;
 while (true)
 {
+    // 재시작 시 메세지 변경
     Console.Clear();
-    if (restartFlag)
-    {
+    if (restartFlag) {
         Console.WriteLine("=== 새 게임 시작 ===");
-    } else
-    {
+    } else {
         Console.WriteLine("=== 블랙잭 게임 ===");
     }
     Console.WriteLine();
-
-    DrawCard drawcard = new DrawCard();
-    drawcard.suffle();
-
+    
     Console.WriteLine("카드를 섞는 중 ...");
     Console.WriteLine();
 
-    Player player = new Player();
+    // 딜러 카드 두 장 뽑은 후 점수 계산
     Player dealer = new Player();
     Card hidden = drawcard.Draw();
     dealer.AddCard(hidden);
     dealer.AddCard(drawcard.Draw());
     dealer.CheckScore();
+    
+    // 플레이어 카드 두 장 뽑은 후 점수 계산
+    Player player = new Player();
     player.AddCard(drawcard.Draw());
     player.AddCard(drawcard.Draw());
     player.CheckScore();
+
+    // === 출력부 ===
     Console.WriteLine("=== 초기 패 ===");
-    Console.WriteLine($"딜러의 패: {dealer.ShowHiddenCardList()}");
+    Console.WriteLine($"딜러의 패: {dealer.GetCardList(true)}");
     Console.WriteLine("딜러 점수: ?");
     Console.WriteLine();
 
-    Console.WriteLine($"플레이어의 카드 리스트 : {player.ShowCardList()}");
+    Console.WriteLine($"플레이어의 카드 리스트 : {player.GetCardList()}");
     Console.WriteLine($"플레이어의 점수: {player.Score}");
     Console.WriteLine();
+    // ==============
+
     bool burstFlag = false;
     do
     {
@@ -53,7 +57,7 @@ while (true)
             player.CheckScore();
             Console.WriteLine();
             Console.WriteLine($"플레이어가 카드를 받았습니다: {temp}");
-            Console.WriteLine($"플레이어의 패: {player.ShowCardList()}");
+            Console.WriteLine($"플레이어의 패: {player.GetCardList()}");
             Console.WriteLine($"플레이어의 점수: {player.Score}");
             Console.WriteLine();
 
@@ -91,18 +95,17 @@ while (true)
     else
     {
         Console.WriteLine($"딜러의 숨겨진 카드: {hidden}");
-        Console.WriteLine($"딜러의 패: {dealer.ShowCardList()}");
+        Console.WriteLine($"딜러의 패: {dealer.GetCardList(true)}");
         Console.WriteLine($"딜러 점수: {dealer.Score}");
         Console.WriteLine();
 
         bool dealerLoseFlag = false;
-        while (dealer.Score < 17)
-        {
+        while (dealer.Score < 17) {
             Card temp = drawcard.Draw();
             dealer.AddCard(temp);
             dealer.CheckScore();
             Console.WriteLine($"딜러가 카드를 받습니다. {temp}");
-            Console.WriteLine($"딜러의 패: {dealer.ShowCardList()}");
+            Console.WriteLine($"딜러의 패: {dealer.GetCardList()}");
             Console.WriteLine($"딜러 점수: {dealer.Score}");
             Console.WriteLine();
             if(dealer.Score>21)
@@ -113,8 +116,7 @@ while (true)
             }
         }
 
-        if (dealerLoseFlag || dealer.Score < player.Score)
-        {
+        if (dealerLoseFlag || dealer.Score < player.Score) {
             Console.WriteLine("=== 게임 결과 ===");
             Console.WriteLine($"플레이어: {player.Score}점");
             Console.WriteLine($"딜러: {dealer.Score}점");
@@ -140,6 +142,7 @@ while (true)
             Console.WriteLine();
         }
     }
+
     Console.Write("새 게임을 하시겠습니까? (Y/N): ");
     string input = Console.ReadLine();
     Console.WriteLine();
